@@ -8,7 +8,8 @@ function arrayBufferToBase64(arrayBuffer: ArrayBuffer): string {
 export async function GET(req: Request) {
   const url = new URL(req.url);
   const searchParams = url.searchParams;
-  const content = searchParams.get('content');
+  let content = searchParams.get('content') || '';
+  content = content.replace(' - ', '\n\n-- ');
   const date = searchParams.get('date');
   const image = await fetch('https://picsum.photos/496/496?blur=1')
     .then((res) => res.arrayBuffer());
