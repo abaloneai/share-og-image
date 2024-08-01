@@ -120,6 +120,9 @@ export async function GET(req: Request) {
           style: 'normal',
         },
       ],
+      headers: { // allow CORs
+        'access-control-allow-origin': '*',
+      },
     },
   )
 }
