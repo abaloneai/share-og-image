@@ -2,8 +2,7 @@ import { ImageResponse } from 'next/og';
 
 function arrayBufferToBase64(arrayBuffer: ArrayBuffer): string {
   const buffer = Buffer.from(arrayBuffer);
-  const base64 = buffer.toString('base64');
-  return base64;
+  return buffer.toString('base64');
 }
 
 export async function GET(req: Request) {
@@ -14,9 +13,9 @@ export async function GET(req: Request) {
   const image = await fetch('https://picsum.photos/496/496?blur=1')
     .then((res) => res.arrayBuffer());
   const imageUrl = `data:image/jpeg;base64,${arrayBufferToBase64(image)}`;
-  const Lexend = await fetch('http://localhost:3000/Lexend.ttf')
+  const Lexend = await fetch(process.env.HOST_NAME + '/Lexend.ttf')
     .then((res) => res.arrayBuffer());
-  const Hanken = await fetch('http://localhost:3000/HankenGrotesk.ttf')
+  const Hanken = await fetch(process.env.HOST_NAME + '/HankenGrotesk.ttf')
     .then((res) => res.arrayBuffer());
 
   return new ImageResponse(
