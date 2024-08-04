@@ -28,6 +28,7 @@ export async function GET(req: Request) {
     .then((res) => res.arrayBuffer());
   const Hanken = await fetch(process.env.HOST_NAME + '/HankenGrotesk.ttf')
     .then((res) => res.arrayBuffer());
+  const hasReference = req.headers.has('Referer');
 
   return new ImageResponse(
     (
@@ -134,8 +135,10 @@ export async function GET(req: Request) {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET,OPTIONS',
         'Access-Control-Allow-Headers': 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization',
-        'Content-Description': 'File Transfer',
-        'Content-Disposition': 'attachment; filename="dailylift-share-quote.png"',
+        ...hasReference && {
+          'Content-Description': 'File Transfer',
+          'Content-Disposition': 'attachment; filename="dailylift-share-quote.png"',
+        },
       },
     },
   )
