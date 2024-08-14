@@ -21,6 +21,8 @@ export async function GET(req: Request) {
   let content = searchParams.get('content') || '';
   content = content.replace(' - ', '\n\n-- ');
   const bg = searchParams.get('bg') || '';
+  const theme = searchParams.get('theme') || '';
+  const isImage = /\.(png|jpg)$/.test(bg);
   const Lexend = await fetch(process.env.HOST_NAME + '/Lexend.ttf')
     .then((res) => res.arrayBuffer());
   const Hanken = await fetch(process.env.HOST_NAME + '/HankenGrotesk.ttf')
@@ -40,8 +42,9 @@ export async function GET(req: Request) {
           padding: 64,
           position: 'relative',
         }}
+        tw={!isImage ? bg : ''}
       >
-        {bg && (
+        {isImage && (
           <img
             width={750}
             height={1334}
@@ -57,7 +60,7 @@ export async function GET(req: Request) {
             }}
           />
         )}
-        {bg && (
+        {isImage && (
           <div
             style={{
               position: 'absolute',
@@ -71,8 +74,8 @@ export async function GET(req: Request) {
           />
         )}
         <div
+          tw={theme}
           style={{
-            color: 'white',
             fontSize: 56,
             fontFamily: 'Hanken',
             textAlign: 'center',
