@@ -20,10 +20,7 @@ export async function GET(req: Request) {
   const searchParams = url.searchParams;
   let content = searchParams.get('content') || '';
   content = content.replace(' - ', '\n\n-- ');
-  const date = searchParams.get('date');
-  const image = await fetch('https://picsum.photos/496/496?blur=1')
-    .then((res) => res.arrayBuffer());
-  const imageUrl = `data:image/jpeg;base64,${arrayBufferToBase64(image)}`;
+  const bg = searchParams.get('bg') || '';
   const Lexend = await fetch(process.env.HOST_NAME + '/Lexend.ttf')
     .then((res) => res.arrayBuffer());
   const Hanken = await fetch(process.env.HOST_NAME + '/HankenGrotesk.ttf')
@@ -38,87 +35,74 @@ export async function GET(req: Request) {
           height: '100%',
           display: 'flex',
           flexDirection: 'column',
-          background: 'linear-gradient(150deg, #0ea5e9, #0c4a6e)',
-          padding: 32,
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: 64,
+          position: 'relative',
         }}
       >
-        <header
-          style={{
-            color: "white",
-            fontFamily: 'Hanken',
-            fontSize: '16',
-            fontWeight: 'bold',
-            marginBottom: 16,
-            paddingLeft: 16,
-          }}
-        >
-          {date}
-        </header>
-        <img
-          width="496"
-          height="496"
-          src={imageUrl}
-          style={{
-            borderRadius: '32px 32px 0 0',
-          }}
-        />
-        <div
-          style={{
-            backgroundColor: 'white',
-            display: 'flex',
-            flex: 1,
-            flexDirection: 'column',
-            padding: '24px 32px 16px',
-            borderRadius: '0 0 32px 32px',
-          }}
-        >
-          <p
+        {bg && (
+          <img
+            width={750}
+            height={1334}
+            src={bg}
             style={{
-              fontSize: 32,
-              fontFamily: 'Hanken',
-              whiteSpace: 'pre-wrap',
-            }}
-          >
-            {content}
-          </p>
-          <hr
-            style={{
-              display: 'flex',
-              borderColor: '#eee',
-              borderStyle: 'solid',
-              borderWidth: '1px 0 0',
-              marginTop: 'auto',
-              width: '100%',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: 750,
+              height: 1334,
+              zIndex: -1,
+              filter: 'blur(4px)',
             }}
           />
+        )}
+        {bg && (
           <div
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: 750,
+              height: 1334,
+              backgroundColor: '#0006',
+              zIndex: 0,
             }}
-          >
-            <p
-              style={{
-                color: '#666',
-                fontFamily: 'Lexend',
-              }}
-            >
-              DailyLift.io
-            </p>
-            <p
-              style={{
-                color: '#666',
-                fontWeight: 'light',
-              }}
-            >Thrive every day</p>
-          </div>
+          />
+        )}
+        <div
+          style={{
+            color: 'white',
+            fontSize: 56,
+            fontFamily: 'Hanken',
+            textAlign: 'center',
+            position: 'relative',
+            zIndex: 1,
+            whiteSpace: 'pre-wrap',
+          }}
+        >
+          {content}
+        </div>
+        <div
+          style={{
+            backgroundColor: '#9333ea99',
+            borderRadius: 8,
+            padding: '8px 16px',
+            fontSize: 32,
+            color: '#fff',
+            marginTop: 64,
+            fontFamily: 'Lexend',
+            position: 'relative',
+            zIndex: 1,
+          }}
+        >
+          DailyLift.io
         </div>
       </div>
     ),
     {
-      width: 560,
-      height: 1000,
+      width: 750,
+      height: 1334,
       fonts: [
         {
           name: 'Lexend',
