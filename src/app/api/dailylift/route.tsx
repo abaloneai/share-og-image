@@ -1,5 +1,7 @@
 import { ImageResponse } from 'next/og';
 
+export const runtime = 'edge';
+
 function arrayBufferToBase64(arrayBuffer: ArrayBuffer): string {
   const buffer = Buffer.from(arrayBuffer);
   return buffer.toString('base64');
@@ -44,35 +46,33 @@ export async function GET(req: Request) {
         }}
         tw={!isImage ? bg : ''}
       >
-        {isImage && (
-          <img
-            width={750}
-            height={1334}
-            src={bg}
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: 750,
-              height: 1334,
-              zIndex: -1,
-              filter: 'blur(4px)',
-            }}
-          />
-        )}
-        {isImage && (
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: 750,
-              height: 1334,
-              backgroundColor: '#0006',
-              zIndex: 0,
-            }}
-          />
-        )}
+        {isImage
+          ? <img
+              width={750}
+              height={1334}
+              src={bg}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: 750,
+                height: 1334,
+                zIndex: -1,
+                filter: 'blur(4px)',
+              }}
+            />
+          : <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: 750,
+                height: 1334,
+                backgroundColor: '#0006',
+                zIndex: 0,
+              }}
+            />
+        }
         <div
           tw={theme}
           style={{
