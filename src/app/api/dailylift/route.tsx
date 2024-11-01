@@ -2,11 +2,6 @@ import { ImageResponse } from 'next/og';
 
 export const runtime = 'edge';
 
-function arrayBufferToBase64(arrayBuffer: ArrayBuffer): string {
-  const buffer = Buffer.from(arrayBuffer);
-  return buffer.toString('base64');
-}
-
 export async function OPTIONS() {
   return new Response(null, {
     headers: {
@@ -17,18 +12,19 @@ export async function OPTIONS() {
   });
 }
 
+function trimQuote(content: string): string {
+  return content.endsWith('"') ? content.replace(/^"|"$/g, '') : content;
+}
+
 export async function GET(req: Request) {
   const url = new URL(req.url);
   const searchParams = url.searchParams;
-  let content = searchParams.get('content') || '';
-  content = content.replace(' - ', '\n\n-- ');
+  const content = searchParams.get('content') || '';
+  const [body, author] = trimQuote(content).split(' - ');
+  const width = Number(searchParams.get('width') || 750);
+  const height = Number(searchParams.get('height') || 1334);
   const bg = searchParams.get('bg') || '';
-  const theme = searchParams.get('theme') || '';
   const isImage = /\.(png|jpg)$/.test(bg);
-  const Lexend = await fetch(process.env.HOST_NAME + '/Lexend.ttf')
-    .then((res) => res.arrayBuffer());
-  const Hanken = await fetch(process.env.HOST_NAME + '/HankenGrotesk.ttf')
-    .then((res) => res.arrayBuffer());
   const hasReference = req.headers.has('Referer');
 
   return new ImageResponse(
@@ -41,83 +37,88 @@ export async function GET(req: Request) {
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
-          padding: 64,
+          padding: 120,
           position: 'relative',
         }}
-        tw={!isImage ? bg : ''}
       >
-        {isImage
-          ? <img
-              width={750}
-              height={1334}
-              src={bg}
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: 750,
-                height: 1334,
-                zIndex: -1,
-                filter: 'blur(4px)',
-              }}
-            />
-          : <div
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: 750,
-                height: 1334,
-                backgroundColor: '#0006',
-                zIndex: 0,
-              }}
-            />
-        }
-        <div
-          tw={theme}
+        {isImage && <img
+          width={width}
+          height={height}
+          src={bg}
           style={{
-            fontSize: 56,
-            fontFamily: 'Hanken',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width,
+            height,
+            zIndex: -1,
+            filter: 'blur(32px)',
+          }}
+        />}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width,
+            height,
+            backgroundColor: 'white',
+            zIndex: 0,
+            opacity: 0.8,
+          }}
+        />
+        <div
+          style={{
+            color: '#000c',
+            display: 'flex',
+            fontSize: 72,
+            marginTop: 'auto',
+            marginBottom: 64,
             textAlign: 'center',
             position: 'relative',
-            zIndex: 1,
+            zIndex: 10,
             whiteSpace: 'pre-wrap',
           }}
         >
-          {content}
+          {body}
         </div>
+        {author && <div
+          style={{
+            color: '#000c',
+            display: 'flex',
+            fontSize: 48,
+            position: 'relative',
+            textAlign: 'center',
+            zIndex: 10,
+          }}
+        >
+          - {author}
+        </div>}
         <div
           style={{
-            backgroundColor: '#9333ea99',
-            borderRadius: 8,
-            padding: '8px 16px',
-            fontSize: 32,
-            color: '#fff',
-            marginTop: 64,
-            fontFamily: 'Lexend',
+            display: 'flex',
+            alignItems: 'center',
+            fontSize: 36,
+            gap: 12,
+            color: '#000c',
+            marginTop: 'auto',
             position: 'relative',
             zIndex: 1,
           }}
         >
+          <img
+            src={`${process.env.HOST_NAME}/DailyLift-logo-white.png`}
+            alt="DailyLift"
+            width={48}
+            height={48}
+          />
           DailyLift.io
         </div>
       </div>
     ),
     {
-      width: 750,
-      height: 1334,
-      fonts: [
-        {
-          name: 'Lexend',
-          data: Lexend,
-          style: 'normal',
-        },
-        {
-          name: 'Hanken',
-          data: Hanken,
-          style: 'normal',
-        },
-      ],
+      width,
+      height,
       headers: { // allow CORs
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET,OPTIONS',
