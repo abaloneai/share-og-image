@@ -21,8 +21,9 @@ export async function GET(req: Request) {
   const searchParams = url.searchParams;
   const content = searchParams.get('content') || '';
   const [body, author] = trimQuote(content).split(' - ');
-  const width = Number(searchParams.get('width') || 750);
-  const height = Number(searchParams.get('height') || 1334);
+  const ratio = Number(searchParams.get('ratio') || 2);
+  const width = Number(searchParams.get('width') || 375) * ratio;
+  const height = Number(searchParams.get('height') || 667) * ratio;
   const bg = searchParams.get('bg') || '';
   const isImage = /\.(png|jpg)$/.test(bg);
   const hasReference = req.headers.has('Referer');
@@ -37,7 +38,7 @@ export async function GET(req: Request) {
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
-          padding: 120,
+          padding: 40 * ratio,
           position: 'relative',
         }}
       >
@@ -71,9 +72,9 @@ export async function GET(req: Request) {
           style={{
             color: '#000c',
             display: 'flex',
-            fontSize: 72,
+            fontSize: 24 * ratio,
             marginTop: 'auto',
-            marginBottom: 64,
+            marginBottom: 20 * ratio,
             textAlign: 'center',
             position: 'relative',
             zIndex: 10,
@@ -86,7 +87,7 @@ export async function GET(req: Request) {
           style={{
             color: '#000c',
             display: 'flex',
-            fontSize: 48,
+            fontSize: 16 * ratio,
             position: 'relative',
             textAlign: 'center',
             zIndex: 10,
@@ -98,8 +99,8 @@ export async function GET(req: Request) {
           style={{
             display: 'flex',
             alignItems: 'center',
-            fontSize: 36,
-            gap: 12,
+            fontSize: 12 * ratio,
+            gap: 4 * ratio,
             color: '#000c',
             marginTop: 'auto',
             position: 'relative',
@@ -109,8 +110,8 @@ export async function GET(req: Request) {
           <img
             src={`${process.env.HOST_NAME}/DailyLift-logo-white.png`}
             alt="DailyLift"
-            width={48}
-            height={48}
+            width={16 * ratio}
+            height={16 * ratio}
           />
           DailyLift.io
         </div>
